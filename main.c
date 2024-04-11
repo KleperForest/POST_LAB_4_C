@@ -127,5 +127,6 @@ ISR(ADC_vect){
 		PP1 = 0;
 		PP2 = 15;}
 	
+	ADCSRA |= (1<<ADIF);
 }
 
