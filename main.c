@@ -59,6 +59,7 @@ int main(void) {
 		_delay_ms(1);
 		PORTB &= ~(1 << PB2);// Apagar transistor en PB2
 		_delay_ms(1);
+		ADCSRA |= (1<<ADSC);
 		
 		//Leds
 		PORTB |= (1 << PB0);// Encender transistor en PB0
@@ -119,75 +120,7 @@ void initADC(void){
 
 ISR(ADC_vect){
 	//counter = 0.2493*ADCH;
-	
-	
-	if(counter = 0){ PP1 = 0;
-	PP2 = 0;}
-	if((counter > 0) && (counter<= 1)){ PP1 = 1;
-	PP2 = 0;}
-	if((counter > 1) && (counter<= 2)){ PP1 = 2;
-	PP2 = 0;}
-	if((counter > 2) && (counter<= 3)){ PP1 = 3;
-	PP2 = 0;}
-	if((counter > 3) && (counter<= 4)){ PP1 = 4;
-	PP2 = 0;}
-	if((counter > 4) && (counter<= 5)){ PP1 = 5;
-	PP2 = 0;}
-	if((counter > 5) && (counter<= 6)){ PP1 = 6;
-	PP2 = 0;}
-	if((counter > 6) && (counter<= 7)){ PP1 = 7;
-	PP2 = 0;}
-	if((counter > 7) && (counter<= 8)){ PP1 = 8;
-	PP2 = 0;}
-	if((counter > 8) && (counter<= 9)){ PP1 = 9;
-	PP2 = 0;}
-	if((counter > 9) && (counter<= 10)){ PP1 = 10;
-	PP2 = 0;}
-	if((counter > 10) && (counter<= 11)){ PP1 = 11;
-	PP2 = 0;}
-	if((counter > 11) && (counter<= 12)){ PP1 = 12;
-	PP2 = 0;}
-	if((counter > 12) && (counter<= 13)){ PP1 = 13;
-	PP2 = 0;}
-	if((counter > 13) && (counter<= 14)){ PP1 = 14;
-	PP2 = 0;}
-	if((counter > 14) && (counter<= 15)){ PP1 = 15;
-	PP2 = 0;}
-	if((counter > 15) && (counter<= 16)){ PP1 = 0;
-	PP2 = 1;}
-	if((counter > 16) && (counter<= 17)){ PP1 = 1;
-	PP2 = 1;}
-	if((counter > 17) && (counter<= 18)){ PP1 = 2;
-	PP2 = 1;}
-	if((counter > 18) && (counter<= 18)){ PP1 = 3;
-	PP2 = 1;}
-	if((counter > 19) && (counter<= 19)){ PP1 = 4;
-	PP2 = 1;}
-	if((counter > 20) && (counter<= 20)){ PP1 = 5;
-	PP2 = 1;}
-	if((counter > 21) && (counter<= 21)){ PP1 = 6;
-	PP2 = 1;}
-	if((counter > 22) && (counter<= 22)){ PP1 = 7;
-	PP2 = 1;}
-	if((counter > 23) && (counter<= 23)){ PP1 = 8;
-	PP2 = 1;}
-	if((counter > 24) && (counter<= 24)){ PP1 = 9;
-	PP2 = 1;}
-	if((counter > 25) && (counter<= 25)){ PP1 = 10;
-	PP2 = 1;}
-	if((counter > 26) && (counter<= 26)){ PP1 = 11;
-	PP2 = 1;}
-	if((counter > 27) && (counter<= 27)){ PP1 = 12;
-	PP2 = 1;}
-	if((counter > 28) && (counter<= 28)){ PP1 = 13;
-	PP2 = 1;}
-	if((counter > 29) && (counter<= 29)){ PP1 = 14;
-	PP2 = 1;}
-	if((counter > 30) && (counter<= 30)){ PP1 = 15;
-	PP2 = 1;}
-	if((counter > 31) && (counter<= 31)){ PP1 = 0;
-	PP2 = 2;}
 
-	//ADCSRA |= (1<<ADIF);
+	ADCSRA |= (1<<ADIF);
 }
 
