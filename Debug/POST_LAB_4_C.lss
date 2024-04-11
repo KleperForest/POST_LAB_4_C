@@ -116,9 +116,9 @@ void setup(void) {
   a8:	08 95       	ret
 
 000000aa <main>:
-volatile uint8_t contador = 0; // Declarar contador como volatile para uso en interrupción
-
 void setup(void);
+
+//Tabla 7E,28,5D,6D,2B,67,77,2C,7F,2F,3F,73,56,79,57,17
 
 int main(void) {
     cli(); // Deshabilitar Interrupciones
@@ -215,7 +215,7 @@ int main(void) {
 		PORTD = 0;// Limpiamos salida de leds
  11c:	1b b8       	out	0x0b, r1	; 11
 		PORTD = contador;// Mostrar valor de contador
- 11e:	80 91 00 01 	lds	r24, 0x0100	; 0x800100 <_edata>
+ 11e:	80 91 00 01 	lds	r24, 0x0100	; 0x800100 <__DATA_REGION_ORIGIN__>
  122:	8b b9       	out	0x0b, r24	; 11
  124:	89 ef       	ldi	r24, 0xF9	; 249
  126:	90 e0       	ldi	r25, 0x00	; 0
@@ -262,27 +262,27 @@ ISR(PCINT1_vect) {
  15e:	33 9b       	sbis	0x06, 3	; 6
  160:	05 c0       	rjmp	.+10     	; 0x16c <__vector_4+0x28>
         contador++; // Incrementar contador si el botón en PC3 fue presionado
- 162:	80 91 00 01 	lds	r24, 0x0100	; 0x800100 <_edata>
+ 162:	80 91 00 01 	lds	r24, 0x0100	; 0x800100 <__DATA_REGION_ORIGIN__>
  166:	8f 5f       	subi	r24, 0xFF	; 255
- 168:	80 93 00 01 	sts	0x0100, r24	; 0x800100 <_edata>
+ 168:	80 93 00 01 	sts	0x0100, r24	; 0x800100 <__DATA_REGION_ORIGIN__>
     }
     // Verificar si la interrupción fue causada por PCINT8 (PC0)
     if (PINC & (1 << PINC0)) {
  16c:	30 9b       	sbis	0x06, 0	; 6
  16e:	05 c0       	rjmp	.+10     	; 0x17a <__vector_4+0x36>
         contador--; // Decrementar contador si el botón en PC0 fue presionado
- 170:	80 91 00 01 	lds	r24, 0x0100	; 0x800100 <_edata>
+ 170:	80 91 00 01 	lds	r24, 0x0100	; 0x800100 <__DATA_REGION_ORIGIN__>
  174:	81 50       	subi	r24, 0x01	; 1
- 176:	80 93 00 01 	sts	0x0100, r24	; 0x800100 <_edata>
+ 176:	80 93 00 01 	sts	0x0100, r24	; 0x800100 <__DATA_REGION_ORIGIN__>
 	}
 	contador = (contador > 255) ? 0 : contador;// Si contador Overflow 255 se resetea el contador
- 17a:	80 91 00 01 	lds	r24, 0x0100	; 0x800100 <_edata>
- 17e:	80 91 00 01 	lds	r24, 0x0100	; 0x800100 <_edata>
- 182:	80 93 00 01 	sts	0x0100, r24	; 0x800100 <_edata>
+ 17a:	80 91 00 01 	lds	r24, 0x0100	; 0x800100 <__DATA_REGION_ORIGIN__>
+ 17e:	80 91 00 01 	lds	r24, 0x0100	; 0x800100 <__DATA_REGION_ORIGIN__>
+ 182:	80 93 00 01 	sts	0x0100, r24	; 0x800100 <__DATA_REGION_ORIGIN__>
 	contador = (contador < 0) ? 255 : contador;// Si contador Underflow 0 se setea a 255
- 186:	80 91 00 01 	lds	r24, 0x0100	; 0x800100 <_edata>
- 18a:	80 91 00 01 	lds	r24, 0x0100	; 0x800100 <_edata>
- 18e:	80 93 00 01 	sts	0x0100, r24	; 0x800100 <_edata>
+ 186:	80 91 00 01 	lds	r24, 0x0100	; 0x800100 <__DATA_REGION_ORIGIN__>
+ 18a:	80 91 00 01 	lds	r24, 0x0100	; 0x800100 <__DATA_REGION_ORIGIN__>
+ 18e:	80 93 00 01 	sts	0x0100, r24	; 0x800100 <__DATA_REGION_ORIGIN__>
 }
  192:	9f 91       	pop	r25
  194:	8f 91       	pop	r24
