@@ -104,17 +104,11 @@ void initADC(void){
 }
 
 ISR(ADC_vect){
-	counter = ADCH;
 	
-	if(counter > 150){ 
-		PP1 = 15;
-		PP2 = 0;
-		}
-	else if(counter <= 150){
-		PP1 = 0;
-		PP2 = 15;
-	}
+	PP2 = ADCH & 0x0F;
+	PP1 = ADCH & 0xF0;
 	
+	PP1 = PP1 >> 4;
 	
 	//Displays
 	//D1
