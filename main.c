@@ -15,6 +15,8 @@ volatile uint8_t contador = 0; // Declarar contador como volatile para uso en in
 
 void setup(void);
 
+//Tabla 7E,28,5D,6D,2B,67,77,2C,7F,2F,3F,73,56,79,57,17
+
 int main(void) {
     cli(); // Deshabilitar Interrupciones
 
@@ -30,19 +32,23 @@ int main(void) {
 		//Displays
 		//D1
 		PORTB |= (1 << PB1);// Encender transistor en PB1
-		PORTD = 0b00000001;// Mostrar primier display
+		PORTD = 0b01010000;// Mostrar primier display
 		_delay_ms(1);
 		PORTB &= ~(1 << PB1);// Apagar transistor en PB1
 		_delay_ms(1);
 		//D2
 		PORTB |= (1 << PB2);// Encender transistor en PB2
-		PORTD = 0b00000001;// Mostrar segundo display
+		PORTD = 0b00100000;// Mostrar segundo display
 		_delay_ms(1);
 		PORTB &= ~(1 << PB2);// Apagar transistor en PB2
 		_delay_ms(1);
 		
 		// Actualizar el puerto D con el valor del contador
+		//Nota para autor: El problema de los Leds se debia
+		//a que ciertos led tenian la caracteristica que provocaban 
+		//una conección a tierra ¨Artificial¨.
 		PORTB |= (1 << PB0);// Encender transistor en PB0
+		PORTD = 0;// Limpiamos salida de leds
 		PORTD = contador;// Mostrar valor de contador
 		_delay_ms(1);
 		PORTB &= ~(1 << PB0);// Apagar transistor en PB0
@@ -76,4 +82,4 @@ ISR(PCINT1_vect) {
 	contador = (contador < 0) ? 255 : contador;// Si contador Underflow 0 se setea a 255
 }
 
-//Hola
+
