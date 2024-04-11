@@ -2,84 +2,129 @@
 // Universidad del Valle de Guatemala
 // IE2023: Programación de Microcontroladores
 // Autor: Alan Gomez
-// Proyecto: POST_LAB_4_C.c
-// Descripción: Cuarto POST-Laboratorio de Programación de Microcontroladores con lenguaje C.
+// Proyecto: LAB_1_IN.asm
+// Descripción: Cuarto Laboratorio de Programación de Microcontroladores con lenguaje C.
 // Hardware: ATmega328p
-// Created: 6/4/2024
+// Created: 5/4/2024
 //*********************************************************************
-#include <avr/io.h>
-#include <avr/interrupt.h>
-#include <util/delay.h>
 
-volatile uint8_t contador = 0; // Declarar contador como volatile para uso en interrupción
+#define F_CPU 16000000// Speed del Atmega
+
+#include <avr/io.h>
+#include <util/delay.h>
+#include <avr/interrupt.h>
 
 void setup(void);
+void initADC(void);
 
-//Tabla 7E,28,5D,6D,2B,67,77,2C,7F,2F,3F,73,56,79,57,17
+
+const uint8_t mylist[] = {7E,12,5D,57,33,67,6F,52,7F,73,7B,2F,56,1F,6D,69};
+//Tabla en hexadecimal
+
+uint8_t contador = 0; // Inicializar contador a 0
 
 int main(void) {
-    cli(); // Deshabilitar Interrupciones
+	setup();
+	
+	cli();
+	
+	DDRD |= 0xFF;
+	PORTD = 0;
+	UCSR0B = 0;
+	
+	initADC();
+	
+	sei();
+	
+	// Bucle principal
+	while (1) {
+		PORTB |= (1 << PB1);// encender transistor
+		ADCSRA |= (1<<ADSC);
+		_delay_ms(200);
+		}
 
-    // Habilitar interrupciones de pin change para los pines PC0 y PC3
-	PCMSK1 |= ((1 << PCINT11) | (1 << PCINT8)); // Habilitar interrupciones para PCINT11 y PCINT8
-    PCICR |= (1 << PCIE1); // PCINT1 8-14 Grupo 1
-
-    setup(); // Configurar Puertos
-    sei(); // Habilitar Interrupciones Globales
-
-    while (1) {
-        // Programa principal
-		//Displays
-		//D1
-		PORTB |= (1 << PB1);// Encender transistor en PB1
-		PORTD = 0b01010000;// Mostrar primier display
-		_delay_ms(1);
-		PORTB &= ~(1 << PB1);// Apagar transistor en PB1
-		_delay_ms(1);
-		//D2
-		PORTB |= (1 << PB2);// Encender transistor en PB2
-		PORTD = 0b00100000;// Mostrar segundo display
-		_delay_ms(1);
-		PORTB &= ~(1 << PB2);// Apagar transistor en PB2
-		_delay_ms(1);
-		
-		// Actualizar el puerto D con el valor del contador
-		//Nota para autor: El problema de los Leds se debia
-		//a que ciertos led tenian la caracteristica que provocaban 
-		//una conección a tierra ¨Artificial¨.
-		PORTB |= (1 << PB0);// Encender transistor en PB0
-		PORTD = 0;// Limpiamos salida de leds
-		PORTD = contador;// Mostrar valor de contador
-		_delay_ms(1);
-		PORTB &= ~(1 << PB0);// Apagar transistor en PB0
-		_delay_ms(1);
-    }
 }
 
-void setup(void) {
-    // Configurar pines PB0 a PB2 como salidas para los transistores
-    DDRB |= 0b00000111;
-
-    // Configurar PC3 y PC0 como entradas con pull-up habilitado para los botones
-    DDRC &= ~((1 << DDC3) | (1 << DDC0)); // Configurar como entrada
-    PORTC |= ((1 << PORTC3) | (1 << PORTC0)); // Habilitar resistencias de pull-up en PC3 y PC0
-
-    // Configurar pines PD0 a PD7 como salidas para los LEDs
-    DDRD |= 0b11111111;
+void setup(void){
+	// Configurar pines PB0 a PB1 como salidas para los LEDs
+	DDRB |= 0b00000011;
 }
 
-ISR(PCINT1_vect) {
-	_delay_ms(10);
-    // Verificar si la interrupción fue causada por PCINT11 (PC3)
-    if (PINC & (1 << PINC3)) {
-        contador++; // Incrementar contador si el botón en PC3 fue presionado
-    }
-    // Verificar si la interrupción fue causada por PCINT8 (PC0)
-    if (PINC & (1 << PINC0)) {
-        contador--; // Decrementar contador si el botón en PC0 fue presionado
+void initADC(void){
+	ADMUX = 0b0110;// Lectura en ADC6
+	// referencia AVCC = 5V
+	ADMUX |= (1<<REFS0);
+	ADMUX &= ~(1<<REFS1);
+	//Justificacion a al izquierda
+	ADMUX |= (1<<ADLAR);
+	
+	ADCSRA = 0;
+	// Habilitamos la interrupcion del ADC
+	ADCSRA |= (1<<ADIE);
+	// Habilitamos prescaler de 16M/128 Fadc = 125kHz
+	ADCSRA |= (1<<ADPS2) | (1<<ADPS1) | (1<<ADPS0);
+	// Habilitando el ADC
+	ADCSRA |= (1<<ADEN);	
+	
+}
+
+ISR(ADC_vect){
+	
+	if(ADCH <){
+		contador = 0;
 	}
-	contador = (contador > 255) ? 0 : contador;// Si contador Overflow 255 se resetea el contador
-	contador = (contador < 0) ? 255 : contador;// Si contador Underflow 0 se setea a 255
+	else if((ADCH <) && (ADCH < )){
+		contador = 1;
+	}	
+	else if((ADCH <) && (ADCH < )){
+		contador = 2;
+	}
+	else if((ADCH <) && (ADCH < )){
+		contador = 3;
+	}
+	else if((ADCH <) && (ADCH < )){
+		contador = 4;
+	}
+	else if((ADCH <) && (ADCH < )){
+		contador = 5;
+	}
+	else if((ADCH <) && (ADCH < )){
+		contador = 6;
+	}
+	else if((ADCH <) && (ADCH < )){
+		contador = 7;
+	}
+	else if((ADCH <) && (ADCH < )){
+		contador = 8;
+	}
+	else if((ADCH <) && (ADCH < )){
+		contador = 9;
+	}
+	else if((ADCH <) && (ADCH < )){
+		contador = 10;
+	}
+	else if((ADCH <) && (ADCH < )){
+		contador = 11;
+	}
+	else if((ADCH <) && (ADCH < )){
+		contador = 12;
+	}
+	else if((ADCH <) && (ADCH < )){
+		contador = 13;
+	}
+	else if((ADCH <) && (ADCH < )){
+		contador = 14;
+	}
+	else if((ADCH <) && (ADCH < )){
+		contador = 15;
+	}
+	else
+	{
+		contador = 0;
+	}
+	
+	
+	PORTD = mylist[contador];// Cargar valor a puerto
+	ADCSRA |= (1<<ADIF);
+	
 }
-
-
