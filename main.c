@@ -22,7 +22,7 @@ void setup(void);
 void initADC(void);
 
 //Tabla
-const uint8_t mylist[] = {0x7E, 0x28, 0x5D, 0x6D, 0x2B, 0x67, 0x77, 0x2C, 0x7F, 0x2F, 0x3F, 0x73, 0x56, 0x79, 0x57, 0x17};
+const uint8_t mylist[] = {0x3F, 0x0A, 0x5D, 0x5B, 0x6A, 0x73, 0x77, 0x1A, 0x7F, 0x7A, 0x7E, 0x67, 0x35, 0x4F, 0x75, 0x74};
 
 int main(void) {
 	setup(); // Configurar Puertos
@@ -86,7 +86,7 @@ void initADC(void){
 	//reiniciamos
 	ADMUX = 0;
 	// Seleccionamos ADC6
-	ADMUX = 0b110;
+	ADMUX = 0b101;
 	//Referencia AVCC = 5V
 	ADMUX |= (1<<REFS0);
 	ADMUX &= ~(1<<REFS1);
@@ -104,22 +104,29 @@ void initADC(void){
 }
 
 ISR(ADC_vect){
-	//counter = 0.2493*ADCH;
+	counter = ADCH;
 	
-	//PP1 = 15;
-	//PP2 = 7;
+	if(counter > 150){ 
+		PP1 = 15;
+		PP2 = 0;
+		}
+	else if(counter <= 150){
+		PP1 = 0;
+		PP2 = 15;
+	}
+	
 	
 	//Displays
 	//D1
 	PORTB |= (1 << PB1);// Encender transistor en PB1
 	//ADC
-	PORTD = mylist[1];// Cargar valor a puerto
+	PORTD = mylist[PP2];// Cargar valor a puerto
 	_delay_ms(1);
 	PORTB &= ~(1 << PB1);// Apagar transistor en PB1
 	_delay_ms(1);
 	//D2
 	PORTB |= (1 << PB2);// Encender transistor en PB2
-	PORTD = mylist[0];// Cargar valor a puerto
+	PORTD = mylist[PP1];// Cargar valor a puerto
 	_delay_ms(1);
 	PORTB &= ~(1 << PB2);// Apagar transistor en PB2
 	_delay_ms(1);
