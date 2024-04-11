@@ -118,7 +118,7 @@ void initADC(void){
 }
 
 ISR(ADC_vect){
-	counter = 0.2493*ADCH;
+	//counter = 0.2493*ADCH;
 	
 	
 	if(counter = 0){ PP1 = 0;
