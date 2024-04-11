@@ -44,15 +44,14 @@ int main(void) {
 
     while (1) {
         // Programa principal
-		ADCSRA |= (1<<ADSC);
-		
-		
 		//Leds
 		PORTB |= (1 << PB0);// Encender transistor en PB0
 		PORTD = 0;// Limpiamos salida de leds
 		PORTD = contador;// Mostrar valor de contador
 		_delay_ms(1);
 		PORTB &= ~(1 << PB0);// Apagar transistor en PB0
+		_delay_ms(1);
+		ADCSRA |= (1<<ADSC);
 		_delay_ms(1);
     }
 }
@@ -105,16 +104,16 @@ void initADC(void){
 }
 
 ISR(ADC_vect){
-	counter = 0.2493*ADCH;
+	//counter = 0.2493*ADCH;
 	
-	PP1 = 15;
-	PP2 = 7;
+	//PP1 = 15;
+	//PP2 = 7;
 	
 	//Displays
 	//D1
 	PORTB |= (1 << PB1);// Encender transistor en PB1
 	//ADC
-	PORTD = mylist[0];// Cargar valor a puerto
+	PORTD = mylist[1];// Cargar valor a puerto
 	_delay_ms(1);
 	PORTB &= ~(1 << PB1);// Apagar transistor en PB1
 	_delay_ms(1);
