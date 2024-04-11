@@ -13,7 +13,10 @@
 #include <avr/interrupt.h>
 #include <util/delay.h>
 
-volatile uint8_t contador = 0; // Declarar contador como volatile para uso en interrupción
+volatile uint8_t contador = 0; // Declarar contador como volatile para uso en interrupción.
+volatile float counter = 0;// Contador de Lista.
+volatile uint8_t PP1 = 0;// Intervalos de mostreo de tabla
+volatile uint8_t PP2 = 0;// Intervalos de mostreo de tabla
 
 void setup(void);
 void initADC(void);
@@ -115,7 +118,21 @@ void initADC(void){
 }
 
 ISR(ADC_vect){
-	PORTD = ADCH;
+	counter = 0.2493*ADCH;
+	
+	if (counter == 0) {
+		PP1 = 0;
+		PP2 = 0;
+		} else {
+		for (int i = 1; i <= 16; i++) {
+			if (counter > i - 1 && counter <= i) {
+				PP1 = i;
+				PP2 = (i == 16) ? 1 : 0;
+				break;
+			}
+		}
+	}
+
 	ADCSRA |= (1<<ADIF);
 }
 
