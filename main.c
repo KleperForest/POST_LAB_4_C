@@ -14,8 +14,8 @@
 volatile uint8_t contador = 0; // Declarar contador como volatile para uso en interrupción
 
 void setup(void);
-
-//Tabla 7E,28,5D,6D,2B,67,77,2C,7F,2F,3F,73,56,79,57,17
+//Tabla
+const uint8_t mylist[] = {0x7E, 0x28, 0x5D, 0x6D, 0x2B, 0x67, 0x77, 0x2C, 0x7F, 0x2F, 0x3F, 0x73, 0x56, 0x79, 0x57, 0x17};
 
 int main(void) {
     cli(); // Deshabilitar Interrupciones
