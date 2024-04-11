@@ -1,4 +1,11 @@
-
+//*********************************************************************
+// Universidad del Valle de Guatemala
+// IE2023: Programación de Microcontroladores
+// Autor: Alan Gomez
+// Proyecto: POST_LAB_4_C.c
+// Descripción: Cuarto POST-Laboratorio de Programación de Microcontroladores con lenguaje C.
+// Hardware: ATmega328p
+// Created: 6/4/2024
 //*********************************************************************
 #include <avr/io.h>
 #include <avr/interrupt.h>
