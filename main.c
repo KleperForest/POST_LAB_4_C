@@ -18,7 +18,8 @@ void setup(void);
 void initADC(void);
 
 
-const uint8_t mylist[] = {7E,12,5D,57,33,67,6F,52,7F,73,7B,2F,56,1F,6D,69};
+const uint8_t mylist[] = {0x7E, 0x12, 0x5D, 0x57, 0x33, 0x67, 0x6F, 0x52, 0x7F, 0x73, 0x7B, 0x2F, 0x56, 0x1F, 0x6D, 0x69};
+
 //Tabla en hexadecimal
 
 uint8_t contador = 0; // Inicializar contador a 0
@@ -69,7 +70,7 @@ void initADC(void){
 }
 
 ISR(ADC_vect){
-	
+	/*
 	if(ADCH <){
 		contador = 0;
 	}
@@ -121,10 +122,10 @@ ISR(ADC_vect){
 	else
 	{
 		contador = 0;
-	}
+	}*/
 	
 	
-	PORTD = mylist[contador];// Cargar valor a puerto
+	PORTD = ADCH; //mylist[contador];// Cargar valor a puerto
 	ADCSRA |= (1<<ADIF);
 	
 }
