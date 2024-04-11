@@ -120,12 +120,8 @@ void initADC(void){
 ISR(ADC_vect){
 	counter = 0.2493*ADCH;
 	
-	if(counter > 127){
-		PP1 = 15;
-		PP2 = 0;}
-	else if(counter <= 127){
-		PP1 = 0;
-		PP2 = 15;}
+	PP1 = 15;
+	PP2 = 7;
 	
 	ADCSRA |= (1<<ADIF);
 }
