@@ -44,21 +44,8 @@ int main(void) {
 
     while (1) {
         // Programa principal
+		ADCSRA |= (1<<ADSC);
 		
-		//Displays
-		//D1
-		PORTB |= (1 << PB1);// Encender transistor en PB1
-		//ADC
-		PORTD = mylist[PP1];// Cargar valor a puerto
-		_delay_ms(1);
-		PORTB &= ~(1 << PB1);// Apagar transistor en PB1
-		_delay_ms(1);
-		//D2
-		PORTB |= (1 << PB2);// Encender transistor en PB2
-		PORTD = mylist[PP2];// Cargar valor a puerto
-		_delay_ms(1);
-		PORTB &= ~(1 << PB2);// Apagar transistor en PB2
-		_delay_ms(1);
 		
 		//Leds
 		PORTB |= (1 << PB0);// Encender transistor en PB0
@@ -122,6 +109,21 @@ ISR(ADC_vect){
 	
 	PP1 = 15;
 	PP2 = 7;
+	
+	//Displays
+	//D1
+	PORTB |= (1 << PB1);// Encender transistor en PB1
+	//ADC
+	PORTD = mylist[0];// Cargar valor a puerto
+	_delay_ms(1);
+	PORTB &= ~(1 << PB1);// Apagar transistor en PB1
+	_delay_ms(1);
+	//D2
+	PORTB |= (1 << PB2);// Encender transistor en PB2
+	PORTD = mylist[0];// Cargar valor a puerto
+	_delay_ms(1);
+	PORTB &= ~(1 << PB2);// Apagar transistor en PB2
+	_delay_ms(1);
 	
 	ADCSRA |= (1<<ADIF);
 }
