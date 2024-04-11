@@ -7,6 +7,8 @@
 // Hardware: ATmega328p
 // Created: 6/4/2024
 //*********************************************************************
+#define F_CPU 16000000
+
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <util/delay.h>
@@ -14,25 +16,37 @@
 volatile uint8_t contador = 0; // Declarar contador como volatile para uso en interrupción
 
 void setup(void);
+void initADC(void);
+
 //Tabla
 const uint8_t mylist[] = {0x7E, 0x28, 0x5D, 0x6D, 0x2B, 0x67, 0x77, 0x2C, 0x7F, 0x2F, 0x3F, 0x73, 0x56, 0x79, 0x57, 0x17};
 
 int main(void) {
+	setup(); // Configurar Puertos
+	
     cli(); // Deshabilitar Interrupciones
-
+	
+	//INTERRUPCIONES
     // Habilitar interrupciones de pin change para los pines PC0 y PC3
 	PCMSK1 |= ((1 << PCINT11) | (1 << PCINT8)); // Habilitar interrupciones para PCINT11 y PCINT8
     PCICR |= (1 << PCIE1); // PCINT1 8-14 Grupo 1
-
-    setup(); // Configurar Puertos
+	
+	//ADC
+	DDRD |=0xFF;
+	PORTD = 0;
+	UCSR0B = 0;
+	initADC();
+	
     sei(); // Habilitar Interrupciones Globales
 
     while (1) {
         // Programa principal
+		
 		//Displays
 		//D1
 		PORTB |= (1 << PB1);// Encender transistor en PB1
-		PORTD = 0b01010000;// Mostrar primier display
+		//ADC
+		ADCSRA |= (1<<ADSC);
 		_delay_ms(1);
 		PORTB &= ~(1 << PB1);// Apagar transistor en PB1
 		_delay_ms(1);
@@ -43,10 +57,7 @@ int main(void) {
 		PORTB &= ~(1 << PB2);// Apagar transistor en PB2
 		_delay_ms(1);
 		
-		// Actualizar el puerto D con el valor del contador
-		//Nota para autor: El problema de los Leds se debia
-		//a que ciertos led tenian la caracteristica que provocaban 
-		//una conección a tierra ¨Artificial¨.
+		//Leds
 		PORTB |= (1 << PB0);// Encender transistor en PB0
 		PORTD = 0;// Limpiamos salida de leds
 		PORTD = contador;// Mostrar valor de contador
@@ -82,4 +93,29 @@ ISR(PCINT1_vect) {
 	contador = (contador < 0) ? 255 : contador;// Si contador Underflow 0 se setea a 255
 }
 
+void initADC(void){
+	//reiniciamos
+	ADMUX = 0;
+	// Seleccionamos ADC6
+	ADMUX = 0b110;
+	//Referencia AVCC = 5V
+	ADMUX |= (1<<REFS0);
+	ADMUX &= ~(1<<REFS1);
+	//Justificacion a la izquierda
+	ADMUX |= (1<<ADLAR);
+	
+	ADCSRA =0;
+	//Habilitamos la interrupcion del ADC
+	ADCSRA |= (1<<ADIE);
+	//Habilitamos prescaller de 16M/128 Fadc = 125kHz
+	ADCSRA |= (1<<ADPS2) | (1<<ADPS1) | (1<<ADPS0);
+	//Habilitando el ADC
+	ADCSRA |= (1<<ADEN);
+
+}
+
+ISR(ADC_vect){
+	PORTD = ADCH;
+	ADCSRA |= (1<<ADIF);
+}
 
