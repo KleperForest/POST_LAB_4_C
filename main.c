@@ -7,58 +7,58 @@
 // Hardware: ATmega328p
 // Created: 6/4/2024
 //*********************************************************************
+#define F_CPU 16000000
+
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <util/delay.h>
 
-volatile uint8_t contador = 0; // Declarar contador como volatile para uso en interrupción
+volatile uint8_t contador = 0; // Declarar contador como volatile para uso en interrupción.
+volatile float counter = 0;// Contador de Lista.
+volatile uint8_t PP1 = 0;// Intervalos de mostreo de tabla
+volatile uint8_t PP2 = 0;// Intervalos de mostreo de tabla
 
 void setup(void);
+void initADC(void);
 
-//Tabla 7E,28,5D,6D,2B,67,77,2C,7F,2F,3F,73,56,79,57,17
+//Tabla
+const uint8_t mylist[] = {0x3F, 0x0A, 0x5D, 0x5B, 0x6A, 0x73, 0x77, 0x1A, 0x7F, 0x7A, 0x7E, 0x67, 0x35, 0x4F, 0x75, 0x74};
 
 int main(void) {
+	setup(); // Configurar Puertos
+	
     cli(); // Deshabilitar Interrupciones
-
+	
+	//INTERRUPCIONES
     // Habilitar interrupciones de pin change para los pines PC0 y PC3
 	PCMSK1 |= ((1 << PCINT11) | (1 << PCINT8)); // Habilitar interrupciones para PCINT11 y PCINT8
     PCICR |= (1 << PCIE1); // PCINT1 8-14 Grupo 1
-
-    setup(); // Configurar Puertos
+	
+	//ADC
+	DDRD |=0xFF;
+	PORTD = 0;
+	UCSR0B = 0;
+	initADC();
+	
     sei(); // Habilitar Interrupciones Globales
 
     while (1) {
         // Programa principal
-		//Displays
-		//D1
-		PORTB |= (1 << PB1);// Encender transistor en PB1
-		PORTD = 0b01010000;// Mostrar primier display
-		_delay_ms(1);
-		PORTB &= ~(1 << PB1);// Apagar transistor en PB1
-		_delay_ms(1);
-		//D2
-		PORTB |= (1 << PB2);// Encender transistor en PB2
-		PORTD = 0b00100000;// Mostrar segundo display
-		_delay_ms(1);
-		PORTB &= ~(1 << PB2);// Apagar transistor en PB2
-		_delay_ms(1);
-		
-		// Actualizar el puerto D con el valor del contador
-		//Nota para autor: El problema de los Leds se debia
-		//a que ciertos led tenian la caracteristica que provocaban 
-		//una conección a tierra ¨Artificial¨.
+		//Leds
 		PORTB |= (1 << PB0);// Encender transistor en PB0
 		PORTD = 0;// Limpiamos salida de leds
 		PORTD = contador;// Mostrar valor de contador
 		_delay_ms(1);
 		PORTB &= ~(1 << PB0);// Apagar transistor en PB0
 		_delay_ms(1);
+		ADCSRA |= (1<<ADSC);// Lectura de ADC
+		_delay_ms(1);
     }
 }
 
 void setup(void) {
     // Configurar pines PB0 a PB2 como salidas para los transistores
-    DDRB |= 0b00000111;
+    DDRB |= 0b00001111;
 
     // Configurar PC3 y PC0 como entradas con pull-up habilitado para los botones
     DDRC &= ~((1 << DDC3) | (1 << DDC0)); // Configurar como entrada
@@ -82,4 +82,55 @@ ISR(PCINT1_vect) {
 	contador = (contador < 0) ? 255 : contador;// Si contador Underflow 0 se setea a 255
 }
 
+void initADC(void){
+	//reiniciamos
+	ADMUX = 0;
+	// Seleccionamos ADC6
+	ADMUX = 0b101;
+	//Referencia AVCC = 5V
+	ADMUX |= (1<<REFS0);
+	ADMUX &= ~(1<<REFS1);
+	//Justificacion a la izquierda
+	ADMUX |= (1<<ADLAR);
+	
+	ADCSRA =0;
+	//Habilitamos la interrupcion del ADC
+	ADCSRA |= (1<<ADIE);
+	//Habilitamos prescaller de 16M/128 Fadc = 125kHz
+	ADCSRA |= (1<<ADPS2) | (1<<ADPS1) | (1<<ADPS0);
+	//Habilitando el ADC
+	ADCSRA |= (1<<ADEN);
+
+}
+
+ISR(ADC_vect){
+	
+	if(ADCH > contador){
+		PORTB |= (1 << PB3);
+	}
+	else {
+		PORTB &= ~(1 << PB3);
+	}
+	
+	PP2 = ADCH & 0x0F;// Separa ADCH entre PP1 Y PP2
+	PP1 = ADCH & 0xF0;
+	
+	PP1 = PP1 >> 4;// Unir PP1 y PP2, dividido
+	
+	//Displays
+	//D1
+	PORTB |= (1 << PB1);// Encender transistor en PB1
+	PORTD = mylist[PP2];// Cargar valor a puerto de Segunda parte a Display de Decena
+	_delay_ms(1);
+	PORTB &= ~(1 << PB1);// Apagar transistor en PB1
+	_delay_ms(1);
+	//D2
+	PORTB |= (1 << PB2);// Encender transistor en PB2
+	PORTD = mylist[PP1];// Cargar valor a puerto de Primera parte a Display de Unidad
+	_delay_ms(1);
+	PORTB &= ~(1 << PB2);// Apagar transistor en PB2
+	_delay_ms(1);
+	
+	ADCSRA |= (1<<ADIF);
+}
 
