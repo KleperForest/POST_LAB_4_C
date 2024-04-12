@@ -51,14 +51,14 @@ int main(void) {
 		_delay_ms(1);
 		PORTB &= ~(1 << PB0);// Apagar transistor en PB0
 		_delay_ms(1);
-		ADCSRA |= (1<<ADSC);
+		ADCSRA |= (1<<ADSC);// Lectura de ADC
 		_delay_ms(1);
     }
 }
 
 void setup(void) {
     // Configurar pines PB0 a PB2 como salidas para los transistores
-    DDRB |= 0b00000111;
+    DDRB |= 0b00001111;
 
     // Configurar PC3 y PC0 como entradas con pull-up habilitado para los botones
     DDRC &= ~((1 << DDC3) | (1 << DDC0)); // Configurar como entrada
@@ -105,22 +105,28 @@ void initADC(void){
 
 ISR(ADC_vect){
 	
-	PP2 = ADCH & 0x0F;
+	if(ADCH > contador){
+		PORTB |= (1 << PB3);
+	}
+	else {
+		PORTB &= ~(1 << PB3);
+	}
+	
+	PP2 = ADCH & 0x0F;// Separa ADCH entre PP1 Y PP2
 	PP1 = ADCH & 0xF0;
 	
-	PP1 = PP1 >> 4;
+	PP1 = PP1 >> 4;// Unir PP1 y PP2, dividido
 	
 	//Displays
 	//D1
 	PORTB |= (1 << PB1);// Encender transistor en PB1
-	//ADC
-	PORTD = mylist[PP2];// Cargar valor a puerto
+	PORTD = mylist[PP2];// Cargar valor a puerto de Segunda parte a Display de Decena
 	_delay_ms(1);
 	PORTB &= ~(1 << PB1);// Apagar transistor en PB1
 	_delay_ms(1);
 	//D2
 	PORTB |= (1 << PB2);// Encender transistor en PB2
-	PORTD = mylist[PP1];// Cargar valor a puerto
+	PORTD = mylist[PP1];// Cargar valor a puerto de Primera parte a Display de Unidad
 	_delay_ms(1);
 	PORTB &= ~(1 << PB2);// Apagar transistor en PB2
 	_delay_ms(1);
