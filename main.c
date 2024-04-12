@@ -55,7 +55,7 @@ int main(void) {
 		_delay_ms(1);
     }
 }
-
+//Configuración de pines
 void setup(void) {
     // Configurar pines PB0 a PB2 como salidas para los transistores
     DDRB |= 0b00001111;
@@ -67,7 +67,7 @@ void setup(void) {
     // Configurar pines PD0 a PD7 como salidas para los LEDs
     DDRD |= 0b11111111;
 }
-
+//Interrupciones de Botones
 ISR(PCINT1_vect) {
 	_delay_ms(10);
     // Verificar si la interrupción fue causada por PCINT11 (PC3)
@@ -81,7 +81,7 @@ ISR(PCINT1_vect) {
 	contador = (contador > 255) ? 0 : contador;// Si contador Overflow 255 se resetea el contador
 	contador = (contador < 0) ? 255 : contador;// Si contador Underflow 0 se setea a 255
 }
-
+//ADC Configuración
 void initADC(void){
 	//reiniciamos
 	ADMUX = 0;
@@ -102,7 +102,7 @@ void initADC(void){
 	ADCSRA |= (1<<ADEN);
 
 }
-
+//ADC acción
 ISR(ADC_vect){
 	
 	if(ADCH > contador){
