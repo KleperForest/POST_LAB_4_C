@@ -7,19 +7,19 @@
 // Hardware: ATmega328p
 // Created: 6/4/2024
 //*********************************************************************
-#define F_CPU 16000000
+#define F_CPU 16000000// Velocidad Micro.
 
 #include <avr/io.h>
-#include <avr/interrupt.h>
-#include <util/delay.h>
+#include <avr/interrupt.h>// Interrupciones
+#include <util/delay.h>// Delays
 
 volatile uint8_t contador = 0; // Declarar contador como volatile para uso en interrupción.
 volatile float counter = 0;// Contador de Lista.
 volatile uint8_t PP1 = 0;// Intervalos de mostreo de tabla
 volatile uint8_t PP2 = 0;// Intervalos de mostreo de tabla
 
-void setup(void);
-void initADC(void);
+void setup(void);// Modulo de pines
+void initADC(void);// Modulo de ADC
 
 //Tabla
 const uint8_t mylist[] = {0x3F, 0x0A, 0x5D, 0x5B, 0x6A, 0x73, 0x77, 0x1A, 0x7F, 0x7A, 0x7E, 0x67, 0x35, 0x4F, 0x75, 0x74};
@@ -46,7 +46,6 @@ int main(void) {
         // Programa principal
 		//Leds
 		PORTB |= (1 << PB0);// Encender transistor en PB0
-		PORTD = 0;// Limpiamos salida de leds
 		PORTD = contador;// Mostrar valor de contador
 		_delay_ms(1);
 		PORTB &= ~(1 << PB0);// Apagar transistor en PB0
@@ -57,7 +56,7 @@ int main(void) {
 }
 //Configuración de pines
 void setup(void) {
-    // Configurar pines PB0 a PB2 como salidas para los transistores
+    // Configurar pines PB0 a PB2 como salidas para los transistores, y el PB3 como led alarma. 
     DDRB |= 0b00001111;
 
     // Configurar PC3 y PC0 como entradas con pull-up habilitado para los botones
@@ -85,8 +84,8 @@ ISR(PCINT1_vect) {
 void initADC(void){
 	//reiniciamos
 	ADMUX = 0;
-	// Seleccionamos ADC6
-	ADMUX = 0b101;
+	// Seleccionamos ADC5
+	ADMUX = 0b0101;
 	//Referencia AVCC = 5V
 	ADMUX |= (1<<REFS0);
 	ADMUX &= ~(1<<REFS1);
