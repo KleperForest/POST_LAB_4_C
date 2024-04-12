@@ -95,20 +95,22 @@ void initADC(void){
 	ADCSRA =0;
 	//Habilitamos la interrupcion del ADC
 	ADCSRA |= (1<<ADIE);
-	//Habilitamos prescaller de 16M/128 Fadc = 125kHz
+	//Habilitamos prescaler de 16M/128 Fadc = 125kHz
 	ADCSRA |= (1<<ADPS2) | (1<<ADPS1) | (1<<ADPS0);
 	//Habilitando el ADC
 	ADCSRA |= (1<<ADEN);
 
 }
+
 //ADC acción
 ISR(ADC_vect){
 	
+	//Alarma
 	if(ADCH > contador){
-		PORTB |= (1 << PB3);
+		PORTB |= (1 << PB3);// LED ALARMA HIGH
 	}
 	else {
-		PORTB &= ~(1 << PB3);
+		PORTB &= ~(1 << PB3);// LED ALARMA LOW
 	}
 	
 	PP2 = ADCH & 0x0F;// Separa ADCH entre PP1 Y PP2
@@ -130,6 +132,6 @@ ISR(ADC_vect){
 	PORTB &= ~(1 << PB2);// Apagar transistor en PB2
 	_delay_ms(1);
 	
-	ADCSRA |= (1<<ADIF);
+	ADCSRA |= (1<<ADIF);// Valores ADC
 }
 
